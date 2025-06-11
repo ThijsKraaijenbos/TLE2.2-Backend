@@ -6,7 +6,7 @@ window.Alpine = Alpine;
 
 Alpine.start();
 
-
+//crappy piece of code to handle the copy button on the dev account panel to copy your API-key
 let copyIconDiv = document.getElementById("copy-icon-div")
 
 const clickHandler = () => {
