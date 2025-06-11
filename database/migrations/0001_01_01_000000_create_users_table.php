@@ -15,9 +15,9 @@ return new class extends Migration {
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            // Not sure if i need to put cascadeOnDelete or Update.....
+            // Not sure if i need to put cascadeOnDelete or Update..... -roshan
             $table->foreignId('profile_image_id')->constrained(table: 'profile_images', column: 'id');
-            $table->enum('role', ['child', 'parent']);
+            $table->string('role'); //Not an ENUM here, instead it's better to define it in /app/http/enums and then add it to the User Model's casts -thijs
             $table->string('password');
             $table->timestamps();
         });
