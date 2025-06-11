@@ -21,9 +21,9 @@ class DevUserController extends Controller
             'password' => 'required',
         ],
         [
-            'email.required' => 'Email is required',
-            'email.unique' => 'Email has already been taken',
-            'password.required' => 'Password is required',
+            'email.required' => 'Vul een email in',
+            'email.unique' => 'Dit email is al in gebruik',
+            'password.required' => 'Vul een wachtwoord in',
         ]);
 
         $user = new DevUser();
@@ -33,16 +33,10 @@ class DevUserController extends Controller
 
         $token = $user->createToken('API_KEY')->plainTextToken;
 
-//        $res = [
-//            'message' => "User Created",
-//            'user' => $user,
-//            'token' => $token
-//        ];
         return redirect()->route("dev.index")->with('API_KEY', $token);
-//        return view('devpanel/register', compact('token'));
     }
 
-    public function test(Request $request) {
+    public function testLogin(Request $request) {
         return response()->json($request->user());
     }
 
