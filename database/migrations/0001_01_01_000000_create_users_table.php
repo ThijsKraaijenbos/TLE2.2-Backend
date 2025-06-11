@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->foreignId('profile_image_id')->constrained(table: 'profile_images', column: 'id');
             $table->enum('role', ['child', 'parent']);
             $table->string('password');
-            $table->foreignId('profile_image_id')->nullable();
             $table->timestamps();
         });
 
