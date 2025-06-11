@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\V1;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\DevUser;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -39,7 +38,7 @@ class DevUserController extends Controller
 //            'user' => $user,
 //            'token' => $token
 //        ];
-        return redirect()->route("")->with('token', $token);
+        return redirect()->route("dev.index")->with('API_KEY', $token);
 //        return view('devpanel/register', compact('token'));
     }
 
