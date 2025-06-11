@@ -1,8 +1,12 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+
+//Dev user logins (alleen voor ons belangrijk als devs)
+Route::post('/dev-user', [\App\Http\Controllers\V1\DevUserController::class, 'register']);
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+
+});

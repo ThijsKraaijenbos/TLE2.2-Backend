@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\V1;
 
-use App\Http\Requests\StoreProfileImageRequest;
-use App\Http\Requests\UpdateProfileImageRequest;
-use App\Models\ProfileImage;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreFruitRequest;
+use App\Http\Requests\UpdateFruitRequest;
+use App\Models\Fruit;
 
-class ProfileImageController extends Controller
+class FruitController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -27,7 +28,7 @@ class ProfileImageController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProfileImageRequest $request)
+    public function store(StoreFruitRequest $request)
     {
         //
     }
@@ -35,7 +36,7 @@ class ProfileImageController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(ProfileImage $profileImage)
+    public function show(Fruit $fruit)
     {
         //
     }
@@ -43,7 +44,7 @@ class ProfileImageController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(ProfileImage $profileImage)
+    public function edit(Fruit $fruit)
     {
         //
     }
@@ -51,7 +52,7 @@ class ProfileImageController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProfileImageRequest $request, ProfileImage $profileImage)
+    public function update(UpdateFruitRequest $request, Fruit $fruit)
     {
         //
     }
@@ -59,7 +60,7 @@ class ProfileImageController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(ProfileImage $profileImage)
+    public function destroy(Fruit $fruit)
     {
         //
     }
