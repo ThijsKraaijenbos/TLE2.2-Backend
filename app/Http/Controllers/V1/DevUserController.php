@@ -34,12 +34,17 @@ class DevUserController extends Controller
 
         $token = $user->createToken('API_KEY')->plainTextToken;
 
-        $res = [
-            'message' => "User Created",
-            'user' => $user,
-            'token' => $token
-        ];
-        return view('devpanel/register', compact('res'));
+//        $res = [
+//            'message' => "User Created",
+//            'user' => $user,
+//            'token' => $token
+//        ];
+        return redirect()->route("")->with('token', $token);
+//        return view('devpanel/register', compact('token'));
+    }
+
+    public function test(Request $request) {
+        return response()->json($request->user());
     }
 
 }

@@ -8,5 +8,5 @@ Route::post('/dev-user', [\App\Http\Controllers\V1\DevUserController::class, 're
 
 
 Route::middleware(['auth:sanctum'])->group(function () {
-
+    Route::get('/test', [\App\Http\Controllers\V1\DevUserController::class, 'test']);
 });
