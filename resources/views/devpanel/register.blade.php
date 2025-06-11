@@ -1,4 +1,3 @@
-<pre>{{ print_r(session()->all(), true) }}</pre>
 <!doctype html>
 <html>
     <head>
@@ -7,20 +6,17 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body>
-        @if (session('API_KEY'))
-            <h1>token found</h1>
-        @endif
         <div class="w-100 h-full flex flex-col justify-center items-center p-4">
             <h1 class="font-bold text-2xl">Maak Developer Account</h1>
             <form method="POST" class="flex flex-col justify-center items-center gap-5 mt-10 mb-10" action="{{ route('dev.register') }}">
                 @csrf
                 <div class="flex flex-col relative">
                 <label class="bg-white w-min pl-1 pr-1 -top-3.5 left-1.5 absolute" for="email">Email</label>
-                <input class="rounded-md border-slate-400" name="email">
+                <input class="rounded-md border-slate-400" name="email" value="{{ old('email') ?? '' }}">
                 </div>
                 <div class="flex flex-col relative">
                 <label class="bg-white w-min pl-1 pr-1 -top-3.5 left-1.5 absolute" for="password">Wachtwoord</label>
-                <input class="rounded-md border-slate-400" name="password">
+                <input type="text" class="rounded-md border-slate-400" name="password" value="{{ old('password') ?? '' }}">
                 </div>
                 <input type="submit" class="border-slate-400 border-[0.5px] p-2 rounded-md" value="Maak Account">
             </form>
@@ -45,6 +41,11 @@
                         @endforeach
                     </ul>
                 </div>
+            @endif
+            @if (session('API_KEY'))
+                <h1 class="text-green-400">
+                    Account succesvol aangemaakt.
+                </h1>
             @endif
         </div>
     </body>
