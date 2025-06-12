@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
@@ -51,5 +52,15 @@ class UserController extends Controller
         $token = $user->createToken('user_login_token', ['user_login_token'])->plainTextToken;
 
         return response()->json($token);
+    }
+
+    public function checkUser(Request $request) {
+        $userToken = $request->header('X-user-login-token');
+        $token = PersonalAccessToken::findToken($userToken);
+        if (!$token || $token->tokenable_type !== User::class) {
+            return response()->json(["This user token is invalid"], 401);
+        }
+        $user = User::where('id', $token->tokenable_id)->first();
+        return response()->json($user);
     }
 }
