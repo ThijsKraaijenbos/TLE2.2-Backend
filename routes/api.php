@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/login', [UserController::class, 'login']);
-    Route::get('/checkuser', [UserController::class, 'checkuser']);
+    Route::get('/checkuser', [UserController::class, 'checkUser']);
 });
