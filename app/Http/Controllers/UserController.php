@@ -55,6 +55,8 @@ class UserController extends Controller
     }
 
     public function checkUser(Request $request) {
+        //I want to turn most of this into a middleware asap, just put it in here for the time being
+        //to test if it'd work or not. (it does) :D
         $userToken = $request->header('X-user-login-token');
         $token = PersonalAccessToken::findToken($userToken);
         if (!$token || $token->tokenable_type !== User::class) {
