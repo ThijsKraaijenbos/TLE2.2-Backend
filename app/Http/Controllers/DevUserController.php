@@ -31,7 +31,9 @@ class DevUserController extends Controller
         $user->password = Hash::make($request->password);
         $user->save();
 
-        $token = $user->createToken('API_KEY')->plainTextToken;
+
+        //keeping the name and [abilities] of the token the same for consistency -thijs
+        $token = $user->createToken('API_KEY', ['API_KEY'])->plainTextToken;
 
         return redirect()->route("dev.index")->with('API_KEY', $token);
     }
