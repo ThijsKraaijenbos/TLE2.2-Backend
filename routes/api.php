@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Route;
 
 //All routes need to stay in the sanctum middleware since they all need a bearer token for an API user
 //Check register.blade.php, web.php, and DevUserController.php for more info.
+//Error: Invalid ability provided. means that an API key with the wrong ability was inserted (probably a regular user login token)
 Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
     Route::post('/register', [UserController::class, 'register']);
-//    Route::get('/login', [UserController::class, 'register']);
+    Route::post('/login', [UserController::class, 'login']);
 });

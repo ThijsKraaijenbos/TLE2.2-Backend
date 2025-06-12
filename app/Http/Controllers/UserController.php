@@ -29,6 +29,27 @@ class UserController extends Controller
         $user->save();
 
         return response()->json(["User created"], 201);
+    }
 
+    public function login(Request $request) {
+        $request->validate([
+            "email" => "required",
+            "password" => "required",
+        ]);
+
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return response()->json(["Account with this e-mail does not exist"], 404);
+        }
+        if (!Hash::check($request->password, $user->password)) {
+            return response()->json(["Invalid password"], 404);
+        }
+
+        //first delete any old login tokens to not cause issues
+        $user->tokens()->delete();
+
+        $token = $user->createToken('user_login_token', ['user_login_token'])->plainTextToken;
+
+        return response()->json($token);
     }
 }
