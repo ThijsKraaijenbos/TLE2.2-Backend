@@ -5,7 +5,7 @@ namespace App\Enums;
 enum UserRole: string
 {
     case CHILD = 'child';
-    case PARENT = 'parent';
+    case ADULT = 'adult';
 
     //Custom function that can be called to get a list of all available roles as a string
     public static function getRolesList(): string
