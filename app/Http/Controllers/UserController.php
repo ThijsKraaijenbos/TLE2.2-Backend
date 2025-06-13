@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -11,7 +12,7 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
-    public function register(Request $request) {
+    public function register(Request $request): JsonResponse {
         $request->validate([
             "name" => "required",
             "email" => "required|email|unique:users",
@@ -32,7 +33,7 @@ class UserController extends Controller
         return response()->json("User created", 201);
     }
 
-    public function login(Request $request) {
+    public function login(Request $request): JsonResponse {
         $request->validate([
             "email" => "required",
             "password" => "required",
@@ -54,7 +55,7 @@ class UserController extends Controller
         return response()->json($token);
     }
 
-    public function checkUser(Request $request) {
+    public function user(Request $request): JsonResponse {
         //I want to turn most of this into a middleware asap, just put it in here for the time being
         //to test if it'd work or not. (it does) :D
         $userToken = $request->header('X-user-login-token');
