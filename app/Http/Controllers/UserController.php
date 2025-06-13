@@ -16,7 +16,7 @@ class UserController extends Controller
             "name" => "required",
             "email" => "required|email|unique:users",
             "password" => "required",
-            "role" => Rule::in(UserRole::cases()),
+            "role" => ["required", Rule::in(UserRole::cases())],
         ], [
             'role.in' => "Please enter a valid role, you can choose from: " . UserRole::getRolesList(),
         ]);
@@ -29,7 +29,7 @@ class UserController extends Controller
         $user->profile_image_id = 1;
         $user->save();
 
-        return response()->json(["User created"], 201);
+        return response()->json("User created", 201);
     }
 
     public function login(Request $request) {
