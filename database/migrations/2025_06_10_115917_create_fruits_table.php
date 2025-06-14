@@ -15,18 +15,18 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->decimal('price',8,2)->default(0);
+            $table->decimal('price')->default(0);
             $table->string('big_img_file_path')->nullable();
             $table->string('small_img_file_path')->nullable();
-            $table->decimal('weight',8,2);
+            $table->integer('weight');
             $table->string('serving_size')->nullable();
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
+
     public function down(): void
     {
         Schema::dropIfExists('fruits');

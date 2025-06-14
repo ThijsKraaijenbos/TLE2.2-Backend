@@ -17,7 +17,8 @@ class Assignment extends Model
 
     public function users():BelongsToMany
     {
-        return $this->belongsToMany(User::class,'assignment_user');
+        return $this->belongsToMany(User::class,'assignment_user')->withPivot('completed');
+
     }
 
     public function fruit():BelongsTo

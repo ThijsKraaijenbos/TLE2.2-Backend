@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Fruit;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,9 @@ class AssignmentFactory extends Factory
     {
         return [
             //
+            'name'=>fake()->name(),
+            'fruit_id'=>Fruit::query()->inRandomOrder()->value('id') ?? Fruit::factory(),
+
         ];
     }
 }

@@ -12,13 +12,10 @@ return new class extends Migration {
     {
         Schema::create('fruit_user', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
             $table->foreignId('fruit_id')->constrained(table: 'fruits', column: 'id')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained(table: 'users', column: 'id')->cascadeOnDelete();
             $table->boolean('has_eaten_before')->default(value: false);
             $table->boolean( 'like')->nullable();
-
-
             $table->timestamps();
         });
     }

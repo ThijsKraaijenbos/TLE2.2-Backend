@@ -19,6 +19,8 @@ class ProfileImage extends Model
     /** @use HasFactory<ProfileImageFactory> */
     use HasFactory;
 
+
+
     public function users():HasMany
     {
         return $this->hasMany(User::class);
