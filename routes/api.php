@@ -16,3 +16,9 @@ Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
     Route::post('/login', [UserController::class, 'login']);
     Route::get('/user', [UserController::class, 'user']);
 });
+
+
+// Main routes for the app.
+
+
+

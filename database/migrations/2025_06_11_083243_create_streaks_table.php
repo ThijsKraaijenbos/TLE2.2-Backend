@@ -12,7 +12,7 @@ return new class extends Migration {
     {
         Schema::create('streaks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained(table: 'user', column: 'id')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained(table: 'users', column: 'id')->cascadeOnDelete();
             $table->date('start_date');
             $table->date('last_completed_date')->nullable();
             $table->integer('current_streak')->default(0);

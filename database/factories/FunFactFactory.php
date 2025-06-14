@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Fruit;
+use App\Models\FunFact;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\FunFact>
+ * @extends Factory<FunFact>
  */
 class FunFactFactory extends Factory
 {
@@ -18,6 +20,8 @@ class FunFactFactory extends Factory
     {
         return [
             //
+            'fruit_id' => Fruit::query()->inRandomOrder()->value('id') ?? Fruit::factory(),
+            'fruit_fact' => fake()->realTextBetween(50,200),
         ];
     }
 }

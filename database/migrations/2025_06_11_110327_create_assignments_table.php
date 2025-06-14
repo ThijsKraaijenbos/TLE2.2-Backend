@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('assignments', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('fruit_id')->constrained(table: 'fruit', column: 'id');
+            $table->foreignId('fruit_id')->constrained(table: 'fruits', column: 'id');
 
 
             $table->timestamps();

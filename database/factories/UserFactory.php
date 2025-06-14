@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\UserRole;
+use App\Models\ProfileImage;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -29,8 +30,9 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-            'profile_image_id' => 1,
-            'role' => fake()->randomElement( UserRole::class)
+
+            'profile_image_id' => ProfileImage::query()->inRandomOrder()->value(column: 'id') ?? ProfileImage::factory(),
+            'role' => fake()->randomElement(UserRole::class)
         ];
     }
 
@@ -39,7 +41,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,11 @@ class StreakFactory extends Factory
     {
         return [
             //
+            'user_id' => User::query()->inRandomOrder()->value('id') ?? User::factory(),
+            'start_date' => fake()->date('Y-m-d'),
+            'last_completed_date' => fake()->date('Y-m-d'),
+            'current_streak' => fake()->numberBetween(1, 30),
+            'longest_streak' => fake()->numberBetween(20, 30),
         ];
     }
 }

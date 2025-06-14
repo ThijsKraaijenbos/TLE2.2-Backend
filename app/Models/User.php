@@ -57,12 +57,11 @@ class User extends Authenticatable
 
     public function assignments():BelongsToMany
     {
-        return $this->belongsToMany(Assignment::class,'assignment_user');
+        return $this->belongsToMany(Assignment::class,'assignment_user')->withPivot('completed');
     }
     public function fruits():BelongsToMany
     {
-        return $this->belongsToMany(Fruit::class,'fruit_user');
-
+        return $this->belongsToMany(Fruit::class,'fruit_user')->withPivot('has_eaten_before','like')->withTimestamps();
     }
 
     public function profileImage():BelongsTo

@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Fruit;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,5 +14,7 @@ class FruitSeeder extends Seeder
     public function run(): void
     {
         //
+
+        Fruit::factory()->count(50)->create();
     }
 }
