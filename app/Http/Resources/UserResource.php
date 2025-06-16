@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FruitResource extends JsonResource
+class UserResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,16 +15,12 @@ class FruitResource extends JsonResource
     public function toArray(Request $request): array
     {
 //        return parent::toArray($request);
-
         return [
+            'id' => $this->id,
             'name' => $this->name,
-            'description' => $this->description,
-            'price' => $this->price,
-            'big_img_file_path' => $this->big_img_file_path,
-            'small_img_file_path' => $this->small_img_file_path,
-            'weight' => $this->weight,
-            'size' =>$this->serving_size
+            'email' => $this->email,
+            'role' => $this->role,
+            'user_profile_image' => new ProfileImageResource($this->whenLoaded('profileImage')),
         ];
-
     }
 }
