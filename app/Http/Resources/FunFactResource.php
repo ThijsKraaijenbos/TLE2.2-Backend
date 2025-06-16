@@ -14,6 +14,10 @@ class FunFactResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+//        return parent::toArray($request);
+        return [
+            'fact' => $this->fact,
+            'fruit_id' => new FruitResource($this->whenLoaded('fruit')),
+        ];
     }
 }
