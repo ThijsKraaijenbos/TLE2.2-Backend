@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\FruitController;
+use App\Http\Controllers\StreakController;
 use App\Http\Controllers\UserController;
+use App\Models\Streak;
 use Illuminate\Support\Facades\Route;
 //random comment to test deployment
 
@@ -19,6 +23,9 @@ Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
 
 
 // Main routes for the app.
+Route::apiResource('assignments', AssignmentController::class);
+Route::apiResource('fruits', FruitController::class);
+Route::apiResource('streaks', StreakController::class);
 
 
 

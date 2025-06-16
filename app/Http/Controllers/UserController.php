@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -12,7 +13,8 @@ use Laravel\Sanctum\PersonalAccessToken;
 
 class UserController extends Controller
 {
-    public function register(Request $request): JsonResponse {
+    public function register(Request $request): JsonResponse
+    {
         $request->validate([
             "name" => "required",
             "email" => "required|email|unique:users",
@@ -33,7 +35,8 @@ class UserController extends Controller
         return response()->json(["message" => "User created"], 201);
     }
 
-    public function login(Request $request): JsonResponse {
+    public function login(Request $request): JsonResponse
+    {
         $request->validate([
             "email" => "required",
             "password" => "required",
@@ -55,8 +58,13 @@ class UserController extends Controller
         return response()->json(["user-login-token" => $token]);
     }
 
-    public function user(Request $request): JsonResponse {
-        //I want to turn most of this into a middleware asap, just put it in here for the time being
+    public function user(Request $request): JsonResponse
+    {
+
+
+
+
+        //I want to turn most of this into a middleware asap, simply put it in here for the time being
         //to test if it'd work or not. (it does) :D
         $userToken = $request->header('X-user-login-token');
         if (!$userToken) {
@@ -67,7 +75,14 @@ class UserController extends Controller
         if (!$token || $token->tokenable_type !== User::class) {
             return response()->json(["error" => "This user token is invalid"], 401);
         }
-        $user = User::where('id', $token->tokenable_id)->first();
-        return response()->json($user);
+
+
+        $user = User::with('profileImage')->where('id', $token->tokenable_id)->first();
+
+        return response()->json(
+            [
+                "message" => "Succesfully retrieved user",
+                "userData"=> new UserResource($user),
+            ],200);
     }
 }
