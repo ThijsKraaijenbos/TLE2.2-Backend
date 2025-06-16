@@ -47,8 +47,7 @@ class FruitController extends Controller
     {
         // Declare the variables
         $response;
-        $fruitId = Fruit::find($fruit);
-
+        $fruitId = Fruit::with('facts')->find($fruit);
         // Check if the resource is empty
         if (!$fruitId) {
             $response = response()->json(['message' => 'Fruit not found'], 404);

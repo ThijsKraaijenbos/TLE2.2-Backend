@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Laravel\Sanctum\PersonalAccessToken;
+use function Symfony\Component\String\b;
 
 class UserController extends Controller
 {
@@ -60,10 +61,6 @@ class UserController extends Controller
 
     public function user(Request $request): JsonResponse
     {
-
-
-
-
         //I want to turn most of this into a middleware asap, simply put it in here for the time being
         //to test if it'd work or not. (it does) :D
         $userToken = $request->header('X-user-login-token');
@@ -76,13 +73,32 @@ class UserController extends Controller
             return response()->json(["error" => "This user token is invalid"], 401);
         }
 
+        $withVariable = $request->header('X-with');
 
-        $user = User::with('profileImage')->where('id', $token->tokenable_id)->first();
+        switch ($withVariable) {
+            case 'streak, profileImage':
+                $user = User::with('profileImage', 'streak')->where('id', $token->tokenable_id)->first();
+                break;
+            case 'streak':
+                $user = User::with('streak')->where('id', $token->tokenable_id)->first();
+                break;
+            case 'profileImage':
+                $user = User::with('profileImage')->where('id', $token->tokenable_id)->first();
+                break;
+            case '':
+                $user = User::where('id', $token->tokenable_id)->first();
+                break;
+            default:
+        }
+
+
 
         return response()->json(
             [
                 "message" => "Succesfully retrieved user",
-                "userData"=> new UserResource($user),
-            ],200);
+                "userData" => new UserResource($user),
+            ], 200);
     }
+
+
 }

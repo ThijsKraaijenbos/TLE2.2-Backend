@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\FruitController;
+use App\Http\Controllers\FunFactController;
 use App\Http\Controllers\StreakController;
 use App\Http\Controllers\UserController;
 use App\Models\Streak;
@@ -26,6 +27,7 @@ Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
 Route::apiResource('assignments', AssignmentController::class);
 Route::apiResource('fruits', FruitController::class);
 Route::apiResource('streaks', StreakController::class);
+Route::apiResource('fun-facts', FunFactController::class);
 
 
 

@@ -23,7 +23,8 @@ class FruitResource extends JsonResource
             'big_img_file_path' => $this->big_img_file_path,
             'small_img_file_path' => $this->small_img_file_path,
             'weight' => $this->weight,
-            'size' =>$this->serving_size
+            'size' =>$this->serving_size,
+            'fun_facts' => $this->whenLoaded('facts')
         ];
 
     }

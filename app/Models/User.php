@@ -69,8 +69,8 @@ class User extends Authenticatable
         return $this->belongsTo(ProfileImage::class,'profile_image_id');
     }
 
-    public function streaks():HasMany
+    public function streak():HasOne
     {
-        return $this->hasMany(Streak::class);
+        return $this->HasOne(Streak::class);
     }
 }
