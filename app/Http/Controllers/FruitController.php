@@ -105,15 +105,16 @@ class FruitController extends Controller
      */
     public function edit(Fruit $fruit)
     {
-        // validations, request input fields, sync or attach to pivottable if needed, send json resposne with 201 code
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFruitRequest $request, Fruit $fruit)
+    public function update(Request $request, Fruit $fruit)
     {
-        //
+        // validations, request input fields, sync or attach to pivottable if needed, send json resposne with 201 code
+        // validate all fields
+
     }
 
     /**
