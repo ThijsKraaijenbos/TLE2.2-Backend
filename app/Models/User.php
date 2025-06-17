@@ -74,4 +74,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(User::class, 'friend_user', 'user_id', 'friend_id');
     }
+
+    public function streak():hasOne
+    {
+        return $this->hasOne(Streak::class, 'user_id');
+    }
 }

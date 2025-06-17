@@ -37,8 +37,8 @@ class FriendUserController extends Controller
             $receivingUser->friends()->attach($sendingUser);
             return response()->json([
                 "message" => "Successfully added user as friend",
-                "sender" => $sendingUser,
-                "receiver" => $receivingUser
+                "sender" => new UserResource($sendingUser),
+                "receiver" => new UserResource($receivingUser)
             ]);
         } catch (Exception $e) {
             return response()->json([
@@ -47,14 +47,15 @@ class FriendUserController extends Controller
         }
     }
 
-
     public function showFriends(Request $request) {
         //Ability to see all friends w their streaks
         $token = $request->token; //This token comes from the ValidateUserLoginToken middleware
         $user = User::where('id', $token->tokenable_id)->first();
 
+        $friends = $user->friends()->with("streak")->get();
+
         return response()->json([
-            "friends" => $user->friends()->get()
+            "friends" => UserResource::collection($friends)
         ]);
     }
 }
