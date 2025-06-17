@@ -30,4 +30,3 @@ Route::apiResource('streaks', StreakController::class);
 Route::apiResource('fun-facts', FunFactController::class);
 
 
-

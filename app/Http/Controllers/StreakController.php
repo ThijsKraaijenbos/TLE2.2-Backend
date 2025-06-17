@@ -14,7 +14,6 @@ class StreakController extends Controller
     public function index()
     {
 
-
         // Get all users and their streaks and use this as a parameter in the Resource.
         // Otherwise it will not returned anything at all.
         $streaksUser = Streak::with('user')->get();

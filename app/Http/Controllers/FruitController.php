@@ -5,7 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFruitRequest;
 use App\Http\Requests\UpdateFruitRequest;
 use App\Http\Resources\FruitResource;
+use App\Http\Resources\FruitUserResource;
 use App\Models\Fruit;
+use App\Models\FruitUser;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 use function Laravel\Prompts\error;
 use function PHPUnit\Framework\isEmpty;
 
@@ -25,19 +30,49 @@ class FruitController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreFruitRequest $request)
+    public function store(Request $request)
     {
-        // validations, request input fields, sync or attach to pivottable if needed, send json resposne with 201 code
+
+        // When you are storing data it really doesnt matter what columns you request
+        // You just have to request the columns u want to request thats it and validate them
+        $validated = $request->validate([
+            'fruit_id' => 'required|integer',
+            'has_eaten_before' => 'required|boolean',
+            'like' => 'required|boolean'
+        ]);
+
+        // Request all the data
+        $requestFormData = $request->all();
+
+
+        $userToken = $request->header('X-user-login-token');
+        if (!$userToken) {
+            return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
+        }
+
+        $token = PersonalAccessToken::findToken($userToken);
+        if (!$token || $token->tokenable_type !== User::class) {
+            return response()->json(["error" => "This user token is invalid"], 401);
+        }
+
+        // Normally you would use auth()->user() if you want to link to a pivot table
+        // because you need to link the user as well
+        $user = User::where('id', $token->tokenable_id)->first();
+
+        // attach the user to the fruit_user pivot table with the requested keys
+
+        $user->fruits()->attach(
+            $validated['fruit_id'], [
+            'has_eaten_before' => $validated['has_eaten_before'],
+            'like' => $validated['like'],
+        ]);
+
+        return response()->json([
+            'message' => "Succesfully added a new source",
+            'data' => [$user, $validated]
+        ], 201);
     }
 
     /**
