@@ -18,7 +18,7 @@ class FruitController extends Controller
     {
         //
         $response = response()->json([
-            'message' => 'All fruits returned',
+            'message' => 'Successfully retrieved all fruits',
             'data' => FruitResource::collection(Fruit::all())
         ], 200);
         return $response;

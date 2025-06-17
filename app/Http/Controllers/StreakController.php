@@ -21,7 +21,7 @@ class StreakController extends Controller
         // Return all users and their streaks and send it with a JSON format:
         $response = response()->json(
             [
-                'message' => "All users and their streaks returned",
+                'message' => "Successfully retrieved all streaks and their users",
                 'data' => StreakResource::collection($streaksUser)
             ], 200);
         return $response;
