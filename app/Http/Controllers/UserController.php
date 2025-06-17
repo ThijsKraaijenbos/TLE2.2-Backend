@@ -33,7 +33,7 @@ class UserController extends Controller
         $user->profile_image_id = 1;
         $user->save();
 
-        return response()->json(["message" => "User created"], 201);
+        return response()->json(["message" => "Successfully created new user"], 201);
     }
 
     public function login(Request $request): JsonResponse
@@ -93,7 +93,7 @@ class UserController extends Controller
 
         return response()->json(
             [
-                "message" => "Succesfully retrieved user",
+                "message" => "Successfully retrieved user",
                 "userData" => new UserResource($user),
             ], 200);
     }
