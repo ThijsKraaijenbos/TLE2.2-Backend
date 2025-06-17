@@ -61,17 +61,7 @@ class UserController extends Controller
 
     public function user(Request $request): JsonResponse
     {
-        //I want to turn most of this into a middleware asap, simply put it in here for the time being
-        //to test if it'd work or not. (it does) :D
-        $userToken = $request->header('X-user-login-token');
-        if (!$userToken) {
-            return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
-        }
-
-        $token = PersonalAccessToken::findToken($userToken);
-        if (!$token || $token->tokenable_type !== User::class) {
-            return response()->json(["error" => "This user token is invalid"], 401);
-        }
+        $token = $request->token; //This token comes from the ValidateUserLoginToken middleware
 
         $withVariable = $request->header('X-with');
 
