@@ -7,7 +7,6 @@ use App\Http\Controllers\FunFactController;
 use App\Http\Controllers\StreakController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ValidateUserLoginToken;
-use App\Models\Streak;
 use Illuminate\Support\Facades\Route;
 //random comment to test deployment
 
@@ -25,8 +24,11 @@ Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
     Route::get('/user', [UserController::class, 'user'])->middleware(ValidateUserLoginToken::class);
 
     //list all friends
-    Route::get('/friends', [FriendUserController::class, 'showFriends']);
-    Route::post('/friends', [FriendUserController::class, 'addFriend']);
+    Route::middleware([ValidateUserLoginToken::class])->group(function () {
+        Route::get('/friends', [FriendUserController::class, 'showFriends']);
+        Route::post('/friends', [FriendUserController::class, 'addFriend']);
+    });
+
 });
 
 

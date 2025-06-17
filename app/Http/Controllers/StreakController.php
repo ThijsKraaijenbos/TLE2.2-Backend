@@ -33,7 +33,7 @@ class StreakController extends Controller
     {
         // Store the request from the front-end check the inputs that
         // are required and send a JSON response with a 201 code
-
+        
     }
 
     /**

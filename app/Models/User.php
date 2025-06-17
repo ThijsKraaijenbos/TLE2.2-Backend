@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -69,8 +70,8 @@ class User extends Authenticatable
         return $this->belongsTo(ProfileImage::class,'profile_image_id');
     }
 
-    public function streak():HasOne
+    public function friends():belongsToMany
     {
-        return $this->HasOne(Streak::class);
+        return $this->belongsToMany(User::class, 'friend_user', 'user_id', 'friend_id');
     }
 }
