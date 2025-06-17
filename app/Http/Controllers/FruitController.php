@@ -57,7 +57,7 @@ class FruitController extends Controller
 
         $fruitResource = new FruitResource($fruitId);
         $response = response()->json([
-            'message' => "Succesfully retrieved a single assignment",
+            'message' => "Successfully retrieved a single fruit",
             'data' => $fruitResource
         ], 200);
 

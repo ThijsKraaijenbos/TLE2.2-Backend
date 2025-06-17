@@ -93,7 +93,7 @@ class UserController extends Controller
 
         return response()->json(
             [
-                "message" => "Succesfully retrieved user",
+                "message" => "Successfully retrieved user",
                 "userData" => new UserResource($user),
             ], 200);
     }

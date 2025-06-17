@@ -51,7 +51,7 @@ class StreakController extends Controller
 
         $streakResource = new StreakResource($streakId);
         $response = response()->json([
-            'message' => "Succesfully retrieved a single streak",
+            'message' => "Successfully retrieved a single streak",
             'data' => $streakResource
         ], 200
         );

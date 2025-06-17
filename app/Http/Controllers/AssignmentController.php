@@ -17,7 +17,7 @@ class AssignmentController extends Controller
     {
         $response = response()->json(
             [
-                'message' => "Succesfully retrieved all assignments",
+                'message' => "Successfully retrieved all assignments",
                 'data' => AssignmentResource::collection(Assignment::all())
             ], 200);
         return $response;
@@ -53,7 +53,7 @@ class AssignmentController extends Controller
         } else {
             $assignmentResource = new AssignmentResource($assignmentId);
             $response = response()->json([
-                'message' => "Succesfully retrieved a single assignment",
+                'message' => "Successfully retrieved a single assignment",
                 'data' => $assignmentResource
             ], 200);
 
