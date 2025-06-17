@@ -85,12 +85,10 @@ class UserController extends Controller
             case 'profileImage':
                 $user = User::with('profileImage')->where('id', $token->tokenable_id)->first();
                 break;
-            case '':
+            default:
                 $user = User::where('id', $token->tokenable_id)->first();
                 break;
-            default:
         }
-
 
 
         return response()->json(
