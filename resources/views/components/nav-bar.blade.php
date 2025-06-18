@@ -2,15 +2,17 @@
 
     <p>Fruit app admin panel</p>
 
+    <a href="{{ route('home') }}">Home</a>
+
     @guest
-        <a href="{{route('register')}}">Register account</a>
-        <a href="{{route('login')}}">Login</a>
+        <a href="{{  route('register') }}">Register account</a>
+        <a href="{{  route('login') }}">Login</a>
     @endguest
 
     @auth
 
         @can('admin')
-            <a href="{{route('adminFruits')}}">Fruit</a>
+            <a href="{{  route('fruit.admin-index') }}">Fruit</a>
         @endcan
 
         {{--      This logout form has been copy and pasted from Breeze's dashboard --}}

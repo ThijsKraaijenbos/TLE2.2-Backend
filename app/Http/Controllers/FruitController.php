@@ -21,7 +21,7 @@ class FruitController extends Controller
     public function index()
     {
         //
-        $fruitPivotsData = Fruit::with(['users','facts'])->get();
+        $fruitPivotsData = Fruit::with(['users', 'facts'])->get();
         $response = response()->json([
             'message' => 'Successfully retrieved all fruits',
             'data' => FruitResource::collection($fruitPivotsData)
@@ -183,5 +183,42 @@ class FruitController extends Controller
 
         return view('fruit.index', ['fruits' => $fruits]);
 
+    }
+
+    public function adminShow(Fruit $fruit)
+    {
+
+        return view('fruit.detail', ['fruit' => $fruit]);
+
+    }
+
+    public function adminCreate()
+    {
+
+        return view('fruit.create');
+
+    }
+
+    public function adminStore(Request $request)
+    {
+
+        //TODO: Image validation & storage
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:2550',
+            'price' => 'required|numeric',
+            'serving_size' => 'required|string|max:255',
+            'weight' => 'required|numeric',
+        ]);
+
+        $fruit = Fruit::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'serving_size' => $request->serving_size,
+            'weight' => $request->weight,
+        ]);
+
+        return to_route('fruit.admin-detail', [$fruit]);
     }
 }

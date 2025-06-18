@@ -13,7 +13,11 @@ Route::view('/', 'devPanel.home')->name('home');
 // Make sure every route besides the home page is in this middleware
 Route::middleware('can:admin')->group(function () {
 
-    Route::get('/fruits', [FruitController::class, 'adminIndex'])->name('adminFruits');
+    Route::get('/fruits', [FruitController::class, 'adminIndex'])->name('fruit.admin-index');
+    Route::get('/fruits/create', [FruitController::class, 'adminCreate'])->name('fruit.admin-create');
+    Route::post('/fruits/create', [FruitController::class, 'adminStore'])->name('fruit.admin-store');
+
+    Route::get('/fruits/{fruit}', [FruitController::class, 'adminShow'])->name('fruit.admin-detail');
 
 });
 
