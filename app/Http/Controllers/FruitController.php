@@ -21,9 +21,10 @@ class FruitController extends Controller
     public function index()
     {
         //
+        $fruitPivotsData = Fruit::with(['users','facts'])->get();
         $response = response()->json([
             'message' => 'Successfully retrieved all fruits',
-            'data' => FruitResource::collection(Fruit::all())
+            'data' => FruitResource::collection($fruitPivotsData)
         ], 200);
         return $response;
     }

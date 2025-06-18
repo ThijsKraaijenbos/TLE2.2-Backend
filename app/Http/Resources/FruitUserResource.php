@@ -14,6 +14,11 @@ class FruitUserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        return [
+            'fruit_id' => $this->fruit_id,
+            'user_id' => $this->user_id,
+            'has_eaten_before' => $this->has_eaten_before,
+            'like' => $this->like,
+        ];
     }
 }
