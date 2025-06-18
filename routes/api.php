@@ -33,9 +33,9 @@ Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
 
 
 // Main routes for the app.
-Route::apiResource('assignments', AssignmentController::class);
-Route::apiResource('fruits', FruitController::class);
+Route::apiResource('assignments', AssignmentController::class)->only(['index', 'show']);
+Route::apiResource('fruits', FruitController::class)->only(['index', 'show']);
 Route::apiResource('streaks', StreakController::class);
-Route::apiResource('fun-facts', FunFactController::class);
+Route::apiResource('fun-facts', FunFactController::class)->only(['index', 'show']);
 
 
