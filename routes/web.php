@@ -3,7 +3,17 @@
 use App\Http\Controllers\DevUserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [DevUserController::class, 'index'])->name('dev.index');
-Route::post('/', [DevUserController::class, 'register'])->name('dev.register');
+//Breeze's routes often direct to the dashboard, this is here so we don't have to mess with everything
+Route::view('/dashboard', 'devPanel.home')->name('dashboard');
+Route::permanentRedirect('/dashboard', '/');
+
+Route::view('/', 'devPanel.home')->name('home');
+
+// Make sure every route besides the home page is in this middleware
+Route::middleware('can:admin')->group(function () {
+
+
+
+});
 
 require __DIR__.'/auth.php';

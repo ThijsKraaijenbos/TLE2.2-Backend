@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdminKey;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -39,11 +40,18 @@ class RegisteredUserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'profile_image_id' => 1,
+            'role' => 'adult'
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
+
+        AdminKey::create([
+           'user_id' => $user->id,
+           'access_level' => 1
+        ]);
 
         return redirect(route('dashboard', absolute: false));
     }
