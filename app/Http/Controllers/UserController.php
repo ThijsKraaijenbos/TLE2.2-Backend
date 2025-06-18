@@ -65,20 +65,12 @@ class UserController extends Controller
 
         $withVariable = $request->header('X-with');
 
-        switch ($withVariable) {
-            case 'streak, profileImage':
-                $user = User::with('profileImage', 'streak')->where('id', $token->tokenable_id)->first();
-                break;
-            case 'streak':
-                $user = User::with('streak')->where('id', $token->tokenable_id)->first();
-                break;
-            case 'profileImage':
-                $user = User::with('profileImage')->where('id', $token->tokenable_id)->first();
-                break;
-            default:
-                $user = User::where('id', $token->tokenable_id)->first();
-                break;
-        }
+        $user = match ($withVariable) {
+            'streak, profileImage' => User::with('profileImage', 'streak')->where('id', $token->tokenable_id)->first(),
+            'streak' => User::with('streak')->where('id', $token->tokenable_id)->first(),
+            'profileImage' => User::with('profileImage')->where('id', $token->tokenable_id)->first(),
+            default => User::where('id', $token->tokenable_id)->first(),
+        };
 
 
         return response()->json(

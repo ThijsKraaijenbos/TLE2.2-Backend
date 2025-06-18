@@ -20,13 +20,19 @@ class FruitController extends Controller
      */
     public function index()
     {
-        //
-        $fruitPivotsData = Fruit::with(['users','facts'])->get();
-        $response = response()->json([
-            'message' => 'Successfully retrieved all fruits',
-            'data' => FruitResource::collection($fruitPivotsData)
-        ], 200);
-        return $response;
+        try {
+            $fruitPivotsData = Fruit::with(['users', 'facts'])->get();
+            $response = response()->json([
+                'message' => 'Successfully retrieved all fruits',
+                'data' => FruitResource::collection($fruitPivotsData)
+            ], 200);
+            return $response;
+        } catch (e) {
+            $response = response()->json([
+                'message' => 'Successfully retrieved all fruits',
+            ], 404);
+        }
+
     }
 
     /**
@@ -34,9 +40,9 @@ class FruitController extends Controller
      */
     public function store(Request $request)
     {
-
         // When you are storing data it really doesnt matter what columns you request
         // You just have to request the columns u want to request thats it and validate them
+
         $validated = $request->validate([
             'fruit_id' => 'required|integer',
             'has_eaten_before' => 'required|boolean',
@@ -62,7 +68,6 @@ class FruitController extends Controller
         $user = User::where('id', $token->tokenable_id)->first();
 
         // attach the user to the fruit_user pivot table with the requested keys
-
         $user->fruits()->attach(
             $validated['fruit_id'], [
             'has_eaten_before' => $validated['has_eaten_before'],
@@ -160,7 +165,7 @@ class FruitController extends Controller
 
         return response()->json(
             [
-                'message' => 'Fruit resource succesfully updated',
+                'message' => 'Fruit resource successfully updated',
                 'data' => [$user, $validatedUpdatedForm]
 
             ]
