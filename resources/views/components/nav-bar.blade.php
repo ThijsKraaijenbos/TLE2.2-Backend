@@ -10,7 +10,7 @@
     @auth
 
         @can('admin')
-            <a href="{{route('fruits.index')}}">Fruit</a>
+            <a href="{{route('adminFruits')}}">Fruit</a>
         @endcan
 
         {{--      This logout form has been copy and pasted from Breeze's dashboard --}}

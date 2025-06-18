@@ -175,4 +175,13 @@ class FruitController extends Controller
     {
         //
     }
+
+    public function adminIndex()
+    {
+
+        $fruits = Fruit::all();
+
+        return view('fruit.index', ['fruits' => $fruits]);
+
+    }
 }
