@@ -1,11 +1,12 @@
 <?php
 
 use App\Http\Controllers\AssignmentController;
+use App\Http\Controllers\FriendUserController;
 use App\Http\Controllers\FruitController;
 use App\Http\Controllers\FunFactController;
 use App\Http\Controllers\StreakController;
 use App\Http\Controllers\UserController;
-use App\Models\Streak;
+use App\Http\Middleware\ValidateUserLoginToken;
 use Illuminate\Support\Facades\Route;
 //random comment to test deployment
 
@@ -17,9 +18,17 @@ use Illuminate\Support\Facades\Route;
 //Check register.blade.php, web.php, and DevUserController.php for more info.
 //Error: Invalid ability provided. means that an API key with the wrong ability was inserted (probably a regular user login token)
 Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
+    //Regular user registration, login (token return), and getting user info
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/login', [UserController::class, 'login']);
-    Route::get('/user', [UserController::class, 'user']);
+    Route::get('/user', [UserController::class, 'user'])->middleware(ValidateUserLoginToken::class);
+
+    //list all friends
+    Route::middleware([ValidateUserLoginToken::class])->group(function () {
+        Route::get('/friends', [FriendUserController::class, 'showFriends']);
+        Route::post('/friends', [FriendUserController::class, 'addFriend']);
+    });
+
 });
 
 

@@ -16,7 +16,7 @@ class FunFactController extends Controller
         $funFacts = FunFact::with('fruit')->get();
         return response()->json(
             [
-                'message' => "Succesfully retrieved all fun facts",
+                'message' => "Successfully retrieved all fun facts",
                 'data' => $funFacts,
             ]);
     }

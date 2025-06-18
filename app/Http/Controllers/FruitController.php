@@ -12,7 +12,6 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
 use function Laravel\Prompts\error;
-use function PHPUnit\Framework\isEmpty;
 
 class FruitController extends Controller
 {
@@ -23,7 +22,7 @@ class FruitController extends Controller
     {
         //
         $response = response()->json([
-            'message' => 'All fruits returned',
+            'message' => 'Successfully retrieved all fruits',
             'data' => FruitResource::collection(Fruit::all())
         ], 200);
         return $response;
@@ -92,7 +91,7 @@ class FruitController extends Controller
 
         $fruitResource = new FruitResource($fruitId);
         $response = response()->json([
-            'message' => "Succesfully retrieved a single assignment",
+            'message' => "Successfully retrieved a single fruit",
             'data' => $fruitResource
         ], 200);
 
@@ -105,15 +104,67 @@ class FruitController extends Controller
      */
     public function edit(Fruit $fruit)
     {
-        // validations, request input fields, sync or attach to pivottable if needed, send json resposne with 201 code
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateFruitRequest $request, Fruit $fruit)
+    public function update(Request $request, Fruit $fruit)
     {
-        //
+        // validations, request input fields, sync or attach to pivottable if needed, send json resposne with 201 code
+        // validate all fields
+        // when the user changes if he likes the fruit or not
+
+
+        $validated = $request->validate([
+            'fruit_id' => 'required|integer',
+            'has_eaten_before' => 'boolean',
+            'like' => 'boolean'
+        ]);
+        $validatedUpdatedForm = $request->all();
+
+        $userToken = $request->header('X-user-login-token');
+        if (!$userToken) {
+            return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
+        }
+
+        $token = PersonalAccessToken::findToken($userToken);
+        if (!$token || $token->tokenable_type !== User::class) {
+            return response()->json(["error" => "This user token is invalid"], 401);
+        }
+
+        // GET the user
+        $user = User::where('id', $token->tokenable_id)->first();
+
+
+        // Before updating the id must be the same as the fruit_id you are trying to change
+        if ($fruit->id !== $request->input(['fruit_id'])) {
+            return response()->json(
+                [
+                    'message' => 'Wrong fruit id, change it to correct id'
+                ]
+            );
+        }
+
+        // Not sure if i should check if the user that is logged in is the same user changing it
+
+        // updateExistingPivot takes, as its first argument, the id of the row on the related table, not the id of the row on the pivot table.
+        $user->fruits()->updateExistingPivot
+        ($validated['fruit_id'], // Always start with the id
+            [
+                'has_eaten_before' => $validated['has_eaten_before'],
+                'like' => $validated['like']
+            ]
+        );
+
+        return response()->json(
+            [
+                'message' => 'Fruit resource succesfully updated',
+                'data' => [$user, $validatedUpdatedForm]
+
+            ]
+            , 200);
+
     }
 
     /**
