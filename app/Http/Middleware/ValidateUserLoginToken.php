@@ -15,6 +15,7 @@ class ValidateUserLoginToken
      *
      * @param Closure(Request): (Response) $next
      */
+    //random comment because for some dumbass reason this didn't get pushed :(
     public function handle(Request $request, Closure $next): Response
     {
         $userToken = $request->header('X-user-login-token');
