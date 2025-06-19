@@ -10,6 +10,7 @@ use App\Models\Fruit;
 use App\Models\FruitUser;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\PersonalAccessToken;
 use function Laravel\Prompts\error;
 
@@ -202,14 +203,20 @@ class FruitController extends Controller
     public function adminStore(Request $request)
     {
 
-        //TODO: Image validation & storage
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string|max:2550',
             'price' => 'required|numeric',
             'serving_size' => 'required|string|max:255',
             'weight' => 'required|numeric',
+            'big_image' => 'required|image|mimes:jpeg,png,webp,gif,avif,apng|max:5000',
+            'small_image' => 'required|image|mimes:jpeg,png,webp,gif,avif,apng|max:5000',
         ]);
+
+        // Create unique names for the images so we don't accidentally overwrite something
+        $storagePath = public_path('storage/uploads/fruitImages');
+        $bigName = 'storage/uploads/fruitImages/' . Str::random(64) . '.' . $request->big_image->extension();
+        $smallName = 'storage/uploads/fruitImages/' . Str::random(64) . '.' . $request->small_image->extension();
 
         $fruit = Fruit::create([
             'name' => $request->name,
@@ -217,7 +224,14 @@ class FruitController extends Controller
             'price' => $request->price,
             'serving_size' => $request->serving_size,
             'weight' => $request->weight,
+            'big_img_file_path' => $bigName,
+            'small_img_file_path' => $smallName,
         ]);
+
+        // Properly save the file to a folder on the server after we know the database addition was successful
+        $request->big_image->move($storagePath, $bigName);
+        $request->small_image->move($storagePath, $smallName);
+
 
         return to_route('fruit.admin-detail', [$fruit]);
     }
