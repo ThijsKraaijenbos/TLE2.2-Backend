@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\StreakResource;
 use App\Models\Streak;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class StreakController extends Controller
 {
@@ -33,7 +35,52 @@ class StreakController extends Controller
     {
         // Store the request from the front-end check the inputs that
         // are required and send a JSON response with a 201 code
-        
+
+        $userToken = $request->header('X-user-login-token');
+        if (!$userToken) {
+            return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
+        }
+
+        $token = PersonalAccessToken::findToken($userToken);
+        if (!$token || $token->tokenable_type !== User::class) {
+            return response()->json(["error" => "This user token is invalid"], 401);
+        }
+
+        // Normally you would use auth()->user() if you want to link to a pivot table
+        // because you need to link the user as well
+
+        $user = User::where('id', $token->tokenable_id)->first();
+
+
+
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'start_date' => 'date',
+            'last_completed_date' => 'date',
+            'current_streak' => 'integer',
+            'longest_streak' => 'integer'
+        ]);
+
+
+        $streak = new Streak($validated);
+
+        // Old way of adding the columns one by one and inserting them into a table
+        // $streak->start_date = $validated['start_date'];
+        // $streak->last_completed_date = $validated['last_completed_date'];
+        // $streak->current_streak = $validated['current_streak'];
+        //$streak->longest_streak = $validated['longest_streak'];
+
+        $streak->user_id = $user->id;
+        $streak->save();
+
+
+        return response()->json([
+            'message' => "Succesfully added a new source",
+            'data' => $streak
+        ], 201);
+
+
     }
 
     /**
@@ -70,7 +117,62 @@ class StreakController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+
+        // Store the request from the front-end check the inputs that
+        // are required and send a JSON response with a 201 code
+
+        $userToken = $request->header('X-user-login-token');
+        if (!$userToken) {
+            return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
+        }
+
+        $token = PersonalAccessToken::findToken($userToken);
+        if (!$token || $token->tokenable_type !== User::class) {
+            return response()->json(["error" => "This user token is invalid"], 401);
+        }
+
+        // Normally you would use auth()->user() if you want to link to a pivot table
+        // because you need to link the user as well
+
+        $user = User::where('id', $token->tokenable_id)->first();
+
+        // request all the inputs keys
+        // validate all the input keys
+        // add extra logic in case of authorization
+
+        $streak = Streak::find($id);
+        if(!$streak){
+            return response()->json(['message' => 'Streak not found'], 404);
+
+        }
+
+        if ($streak->user_id !== $user->id) {
+            return response()->json([
+                'message' => 'You are not eligble to edit this streak, you dont have authorisation'
+            ], 403);
+        }
+
+
+        $validated = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'start_date' => 'date',
+            'last_completed_date' => 'date',
+            'current_streak' => 'integer',
+            'longest_streak' => 'integer'
+        ]);
+
+        $streak = new Streak($validated);
+        $streak->user_id = $user->id;
+        $streak->save();
+
+        return response()->json([
+            'message' => "Succesfully added a new source",
+            'data' => $streak
+        ], 201);
+
+
+//        $request->validate($streak);
+
     }
 
     /**

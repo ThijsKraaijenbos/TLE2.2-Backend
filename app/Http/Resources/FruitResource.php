@@ -23,8 +23,14 @@ class FruitResource extends JsonResource
             'big_img_file_path' => $this->big_img_file_path,
             'small_img_file_path' => $this->small_img_file_path,
             'weight' => $this->weight,
-            'size' =>$this->serving_size,
-            'fun_facts' => $this->whenLoaded('facts')
+            'size' => $this->serving_size,
+            'fun_facts' => $this->whenLoaded('facts'),
+            'users' => $this->whenLoaded(relationship: 'users', value: function () {
+                return $this->users->map(
+                    function ($user) {
+                        return new FruitUserResource($user->pivot);
+                    });
+            })
         ];
 
     }
