@@ -80,5 +80,14 @@ class UserController extends Controller
             ], 200);
     }
 
+    public function updateUser(Request $request){
+
+
+        return response()->json(
+            [
+                "message" => "Successfully updated user",
+                "userData" => new UserResource($user),
+            ], 200);
+    }
 
 }
