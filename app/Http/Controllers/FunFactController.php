@@ -12,13 +12,18 @@ class FunFactController extends Controller
      */
     public function index()
     {
-        //
-        $funFacts = FunFact::with('fruit')->get();
-        return response()->json(
-            [
-                'message' => "Successfully retrieved all fun facts",
-                'data' => $funFacts,
-            ]);
+        try {
+            $funFacts = FunFact::with('fruit')->get();
+            return response()->json(
+                [
+                    'message' => "Successfully retrieved all fun facts",
+                    'data' => $funFacts,
+                ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 
     /**

@@ -33,6 +33,15 @@ class UserController extends Controller
         $user->profile_image_id = 1;
         $user->save();
 
+
+        // Create a streak after the user is made
+        $user->streak()->create([
+            'start_date' => now(),
+            'last_completed_date' => now(),
+            'current_streak' => 0,
+            'longest_streak' => 0,
+        ]);
+
         return response()->json(["message" => "Successfully created new user"], 201);
     }
 
@@ -62,14 +71,16 @@ class UserController extends Controller
     public function user(Request $request): JsonResponse
     {
         $token = $request->token; //This token comes from the ValidateUserLoginToken middleware
-
         $withVariable = $request->header('X-with');
+        $userTokenId = $token->tokenable_id;
+
+
 
         $user = match ($withVariable) {
-            'streak, profileImage' => User::with('profileImage', 'streak')->where('id', $token->tokenable_id)->first(),
-            'streak' => User::with('streak')->where('id', $token->tokenable_id)->first(),
-            'profileImage' => User::with('profileImage')->where('id', $token->tokenable_id)->first(),
-            default => User::where('id', $token->tokenable_id)->first(),
+            'streak, profileImage' => User::with('profileImage', 'streak')->where('id', $userTokenId)->first(),
+            'streak' => User::with('streak')->where('id', $userTokenId)->first(),
+            'profileImage' => User::with('profileImage')->where('id', $userTokenId)->first(),
+            default => User::where('id', $userTokenId)->first(),
         };
 
 

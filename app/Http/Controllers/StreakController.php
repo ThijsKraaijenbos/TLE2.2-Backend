@@ -52,8 +52,6 @@ class StreakController extends Controller
         $user = User::where('id', $token->tokenable_id)->first();
 
 
-
-
         $validated = $request->validate([
             'user_id' => 'required|exists:users,id',
             'start_date' => 'date',
@@ -143,7 +141,6 @@ class StreakController extends Controller
         $streak = Streak::find($id);
         if(!$streak){
             return response()->json(['message' => 'Streak not found'], 404);
-
         }
 
         if ($streak->user_id !== $user->id) {

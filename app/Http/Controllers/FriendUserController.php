@@ -11,7 +11,8 @@ class FriendUserController extends Controller
 {
 
     //Ability to add friends via email
-    public function addFriend(Request $request) {
+    public function addFriend(Request $request)
+    {
         $request->validate([
             'email' => "required|exists:users",
         ], [
@@ -30,8 +31,8 @@ class FriendUserController extends Controller
             ]);
         }
 
-//      try catch block just in case something goes wrong with the database or something
-//      might be unnecessary but better to have extra safety to make sure it goes well
+        //  try catch block just in case something goes wrong with the database or something
+        // might be unnecessary but better to have extra safety to make sure it goes well
         try {
             $sendingUser->friends()->attach($receivingUser);
             $receivingUser->friends()->attach($sendingUser);
@@ -47,7 +48,8 @@ class FriendUserController extends Controller
         }
     }
 
-    public function showFriends(Request $request) {
+    public function showFriends(Request $request)
+    {
         //Ability to see all friends w their streaks
         $token = $request->token; //This token comes from the ValidateUserLoginToken middleware
         $user = User::where('id', $token->tokenable_id)->first();

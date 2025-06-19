@@ -14,14 +14,14 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-//        return parent::toArray($request);
+        // return parent::toArray($request);
         return [
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
             'role' => $this->role,
             'profile_image_id' => new ProfileImageResource($this->whenLoaded('profileImage')),
-            'streaks'=> new StreakResource($this->whenLoaded('streak'))
+            'streaks' => new StreakResource($this->whenLoaded('streak'))
         ];
     }
 }
