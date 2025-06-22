@@ -21,7 +21,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'role' => $this->role,
             'profile_image_id' => new ProfileImageResource($this->whenLoaded('profileImage')),
-            'streaks' => new StreakResource($this->whenLoaded('streak'))
+            'streak' => new StreakResource($this->whenLoaded('streak'))
         ];
     }
 }

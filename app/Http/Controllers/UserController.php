@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Http\Resources\UserResource;
+use App\Models\Streak;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -24,25 +25,36 @@ class UserController extends Controller
         ], [
             'role.in' => "Please enter a valid role, you can choose from: " . UserRole::getRolesList(),
         ]);
+        try {
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = Hash::make($request->password);
+            $user->role = $request->role;
+            $user->profile_image_id = 1;
+            $user->save();
 
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->role = $request->role;
-        $user->profile_image_id = 1;
-        $user->save();
+            // Create a streak after the user is made
+            $user->streak()->create([
+                'start_date' => today(),
+                'last_completed_date' => today(),
+                'current_streak' => 0,
+                'longest_streak' => 0,
+            ]);
 
+            //workaround because directly doing $user->with("streak"); in the response didnt work
+            $user->load("streak");
+            return response()->json([
+                "message" => "Successfully created new user",
+                "user" => new UserResource($user)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                "message" => "An exception occurred",
+                "error" => $e->getMessage()
+            ], 500);
+        }
 
-        // Create a streak after the user is made
-        $user->streak()->create([
-            'start_date' => now(),
-            'last_completed_date' => now(),
-            'current_streak' => 0,
-            'longest_streak' => 0,
-        ]);
-
-        return response()->json(["message" => "Successfully created new user"], 201);
     }
 
     public function login(Request $request): JsonResponse

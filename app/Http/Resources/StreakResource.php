@@ -28,7 +28,7 @@ class StreakResource extends JsonResource
             // in the controller.
             'user' => new UserResource($this->whenLoaded('user')),
 
-            'start_date'=>$this->start_id,
+            'start_date'=>$this->start_date,
             'last_completed_date'=>$this->last_completed_date,
             'current_streak'=>$this->current_streak,
             'longest_streak'=>$this->longest_streak,
