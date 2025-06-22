@@ -15,6 +15,7 @@ use function Symfony\Component\String\b;
 
 class UserController extends Controller
 {
+    //random comment because deployment went wrong :(
     public function register(Request $request): JsonResponse
     {
         $request->validate([
