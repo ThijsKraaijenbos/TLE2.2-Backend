@@ -11,7 +11,6 @@ use App\Models\FruitUser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
-use mysql_xdevapi\Exception;
 use function Laravel\Prompts\error;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -20,20 +19,60 @@ class FruitController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(\Exception $exception)
+    public function index(Request $request)
     {
+
         try {
-            $fruitPivotsData = Fruit::with(['users', 'facts'])->get();
-            $response = response()->json([
+
+            $fruitPivotsData = Fruit::with(['facts'])->get();
+
+            if ($request->header('X-user-login-token')) {
+
+                $token = PersonalAccessToken::findToken($request->header('X-user-login-token'));
+                if (!$token || $token->tokenable_type !== User::class) {
+                    return response()->json(["error" => "This user token is invalid"], 401);
+                }
+
+                $userPreferences = FruitUser::where('user_id', $token->tokenable_id)->get();
+
+                if ($userPreferences->isNotEmpty()) {
+
+                    foreach ($userPreferences as $key => $preference) {
+
+                        $index = false;
+
+                        foreach ($fruitPivotsData as $datum) {
+
+                            if ($datum['id'] === $preference->fruit_id) {
+                                $index = $key;
+                                break;
+                            }
+
+                        }
+
+                        if ($index) {
+                            $fruitPivotsData[$index]['user_preference'] = [
+                                'has_eaten_before' => $preference->has_eaten_before,
+                                'like' => $preference->like
+                            ];
+                        }
+
+                    }
+
+                }
+            }
+
+            return response()->json([
                 'message' => 'Successfully retrieved all fruits',
                 'data' => FruitResource::collection($fruitPivotsData)
             ], 200);
-            return $response;
+
         } catch (\Exception $exception) {
             return response()->json([
-                'error' => $exception->getMessage()
-            ], 404);
+                'error' => 'Please try again later'
+            ], 500);
         }
+
     }
 
     /**
@@ -92,11 +131,10 @@ class FruitController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $fruit)
+    public function show(Request $request, string $fruit)
     {
         try {
             // Declare the variables
-            $response;
             $fruitId = Fruit::with('facts')->find($fruit);
             // Check if the resource is empty or null
             if (!$fruitId) {
@@ -104,6 +142,22 @@ class FruitController extends Controller
                 return $response;
             }
 
+            if ($request->header('X-user-login-token')) {
+
+                $token = PersonalAccessToken::findToken($request->header('X-user-login-token'));
+                if (!$token || $token->tokenable_type !== User::class) {
+                    return response()->json(["error" => "This user token is invalid"], 401);
+                }
+
+                $userPreference = FruitUser::where('user_id', $token->tokenable_id)->where('fruit_id', $fruitId->id)->first();
+
+                if ($userPreference) {
+                    $fruitId['user_preference'] = [
+                        'has_eaten_before' => $userPreference->has_eaten_before,
+                        'like' => $userPreference->like
+                    ];
+                }
+            }
 
             $fruitResource = new FruitResource($fruitId);
             $response = response()->json([
@@ -115,7 +169,7 @@ class FruitController extends Controller
             return $response;
 
         } catch (\Exception $exception) {
-            $respone = response()->json(['error' => $exception->getMessage()], 404);
+            return response()->json(['error' => $exception->getMessage()], 500);
         }
 
     }

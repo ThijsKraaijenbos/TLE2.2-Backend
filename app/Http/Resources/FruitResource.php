@@ -26,12 +26,16 @@ class FruitResource extends JsonResource
             'weight' => $this->weight,
             'size' => $this->serving_size,
             'fun_facts' => $this->whenLoaded('facts'),
-            'users' => $this->whenLoaded(relationship: 'users', value: function () {
-                return $this->users->map(
-                    function ($user) {
-                        return new FruitUserResource($user->pivot);
-                    });
-            })
+            'user_preference' => $this->user_preference ?? [
+                    'has_eaten_before' => 0,
+                    'like' => 1
+                ]
+//            'users' => $this->whenLoaded(relationship: 'users', value: function () {
+//                return $this->users->map(
+//                    function ($user) {
+//                        return new FruitUserResource($user->pivot);
+//                    });
+//            })
         ];
 
     }
