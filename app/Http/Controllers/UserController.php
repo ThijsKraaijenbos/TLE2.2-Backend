@@ -38,8 +38,8 @@ class UserController extends Controller
 
             // Create a streak after the user is made
             $user->streak()->create([
-                'start_date' => date('d-m-Y'),
-                'last_completed_date' => date('d-m-Y'),
+                'start_date' => date('d-m-Y', strtotime('yesterday')),
+                'last_completed_date' => date('d-m-Y', strtotime('yesterday')),
                 'current_streak' => 0,
                 'longest_streak' => 0,
             ]);
