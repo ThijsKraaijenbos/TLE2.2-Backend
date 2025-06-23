@@ -139,7 +139,7 @@ class StreakController extends Controller
         // add extra logic in case of authorization
 
         $streak = Streak::find($id);
-        if(!$streak){
+        if (!$streak) {
             return response()->json(['message' => 'Streak not found'], 404);
         }
 
@@ -179,4 +179,103 @@ class StreakController extends Controller
     {
         //
     }
+
+    public function updateByUser(Request $request)
+    {
+
+        if ($request->reset) {
+
+            try {
+
+                $streak = Streak::where('user_id', $request->token->tokenable_id)->first();
+
+                $streak->current_streak = 0;
+                $streak->start_date = date('d-m-Y');
+                $streak->last_completed_date = date('d-m-Y');
+
+                $streak->save();
+
+                return response()->json(['message' => "Streak reset", 'streak' => $streak], 200);
+
+            } catch (\Exception $error) {
+
+                return response()->json(['error' => 'Please try again later'], 500);
+
+            }
+
+        }
+
+        //Manually validate date format
+        if (!$request->date) {
+            return response()->json(['error' => 'Date must be provided, please use the format dd-mm-yyyy'], 400);
+        }
+
+        $splitDate = explode('-', $request->date);
+
+        $dateFields = count($splitDate);
+
+        if ($dateFields !== 3) {
+            return response()->json(['error' => 'Incorrect date format, please use dd-mm-yyyy'], 400);
+        }
+
+        if (!is_numeric($splitDate[0])) {
+            return response()->json(['error' => 'Day must be a number'], 400);
+        }
+
+        if (!is_numeric($splitDate[1])) {
+            return response()->json(['error' => 'Month must be a number'], 400);
+        }
+
+        if (!is_numeric($splitDate[2])) {
+            return response()->json(['error' => 'Year must be a number'], 400);
+        }
+
+        if ($splitDate[0] > 31) {
+            return response()->json(['error' => 'Day can not be above 31'], 400);
+        }
+
+        if ($splitDate[0] < 1) {
+            return response()->json(['error' => 'Day can not be below 1'], 400);
+        }
+
+        if ($splitDate[1] > 12) {
+            return response()->json(['error' => 'Month can not be above 12'], 400);
+        }
+
+        if ($splitDate[1] < 1) {
+            return response()->json(['error' => 'Month can not be below 1'], 400);
+        }
+
+        if ($splitDate[2] < 0) {
+            return response()->json(['error' => 'Year can not be below 0'], 400);
+        }
+
+        try {
+
+            $streak = Streak::where('user_id', $request->token->tokenable_id)->first();
+
+            if ($streak->last_completed_date === $request->date && $streak->current_streak > 0) {
+                return response()->json(['message' => "Streak already up to date", 'streak' => $streak], 200);
+            }
+
+            $streak->current_streak += 1;
+            $streak->last_completed_date = $request->date;
+
+            if ($streak->current_streak > $streak->longest_streak) {
+                $streak->longest_streak = $streak->current_streak;
+            }
+
+            $streak->save();
+
+            return response()->json(['message' => "Streak updated", 'streak' => $streak], 200);
+
+        } catch (\Exception $error) {
+
+            return response()->json(['error' => 'Please try again later'], 500);
+
+        }
+
+
+    }
+
 }

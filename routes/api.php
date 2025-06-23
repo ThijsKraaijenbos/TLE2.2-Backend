@@ -8,6 +8,7 @@ use App\Http\Controllers\StreakController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ValidateUserLoginToken;
 use Illuminate\Support\Facades\Route;
+
 //random comment to test deployment
 
 //This link has extra info for how the token ability middleware alias is added
@@ -37,5 +38,13 @@ Route::apiResource('assignments', AssignmentController::class);
 Route::apiResource('fruits', FruitController::class);
 Route::apiResource('streaks', StreakController::class);
 Route::apiResource('fun-facts', FunFactController::class);
+
+Route::middleware([ValidateUserLoginToken::class])->group(function () {
+
+    //Update streak
+    Route::put('/updateStreak', [StreakController::class, 'updateByUser']);
+
+});
+
 
 

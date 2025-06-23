@@ -20,7 +20,7 @@ class ValidateUserLoginToken
     {
         $userToken = $request->header('X-user-login-token');
         if (!$userToken) {
-            return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
+            return response()->json(["error" => "Please provide an X-user-login-token header"], 400);
         }
 
         $token = PersonalAccessToken::findToken($userToken);
