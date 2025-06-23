@@ -44,6 +44,9 @@ Route::middleware([ValidateUserLoginToken::class])->group(function () {
     //Update streak
     Route::put('/updateStreak', [StreakController::class, 'updateByUser']);
 
+    //Update user
+    Route::put('/users/{user}', [UserController::class, 'update']);
+
 });
 
 

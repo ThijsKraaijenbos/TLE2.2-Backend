@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Http\Resources\UserResource;
+use App\Models\ProfileImage;
 use App\Models\Streak;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -104,5 +105,68 @@ class UserController extends Controller
             ], 200);
     }
 
+    public function update(Request $request, User $user)
+    {
+
+        if ($user->id !== $request->token->tokenable_id) {
+            return response()->json(['error' => "Not authorized to edit this user's profile"], 403);
+        }
+
+        if ($request->profile_image_id) {
+
+            if (!is_int($request->profile_image_id)) {
+                return response()->json(['error' => 'Profile image id must be an integer'], 400);
+            }
+
+            try {
+
+            if (!ProfileImage::find($request->profile_image_id)) {
+                return response()->json(['error' => 'Profile image id does not exist'], 404);
+            }
+
+            $user->profile_image_id = $request->profile_image_id;
+
+            } catch (\Exception $error) {
+                return response()->json(['error' => 'Please try again later'], 500);
+
+            }
+
+        }
+
+        if ($request->name) {
+
+            if (!is_string($request->name)) {
+                return response()->json(['error' => 'Name must be a string'], 400);
+            }
+
+            if ($request->name === '') {
+                return response()->json(['error' => 'Name can not be empty'], 400);
+            }
+
+            if (strlen($request->name) > 255) {
+                return response()->json(['error' => 'Name can not be longer than 255 characters'], 400);
+            }
+
+            $user->name = $request->name;
+        }
+
+        try {
+
+            $user->save();
+
+            $formattedUser = [
+                'name' => $user->name,
+                'profile_image' => $user->profileImage
+            ];
+
+            return response()->json(['message' => 'Profile successfully updated', 'user' => $formattedUser], 200);
+
+        } catch (\Exception $error) {
+
+            return response()->json(['error' => 'Please try again later'], 500);
+
+        }
+
+    }
 
 }
