@@ -39,22 +39,18 @@ class FruitController extends Controller
 
                     foreach ($userPreferences as $key => $preference) {
 
-                        $index = false;
-
                         foreach ($fruitPivotsData as $datum) {
 
                             if ($datum['id'] === $preference->fruit_id) {
-                                $index = $key;
+
+                                $fruitPivotsData[$key]['user_preference'] = [
+                                    'has_eaten_before' => $preference->has_eaten_before,
+                                    'like' => $preference->like
+                                ];
+
                                 break;
                             }
 
-                        }
-
-                        if ($index) {
-                            $fruitPivotsData[$index]['user_preference'] = [
-                                'has_eaten_before' => $preference->has_eaten_before,
-                                'like' => $preference->like
-                            ];
                         }
 
                     }
