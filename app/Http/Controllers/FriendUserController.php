@@ -27,7 +27,14 @@ class FriendUserController extends Controller
         $alreadyFriends = $sendingUser->friends()->get()->contains($receivingUser->id);
         if ($alreadyFriends) {
             return response()->json([
-                "message" => "These users are already friends",
+                "message" => "These users are already friends.",
+            ]);
+        }
+
+        //check if you're adding yourself since that was a bug mentioned by Justin
+        if ($sendingUser == $receivingUser) {
+            return response()->json([
+                "message" => "You cannot send a friend request to yourself."
             ]);
         }
 
@@ -37,7 +44,7 @@ class FriendUserController extends Controller
             $sendingUser->friends()->attach($receivingUser);
             $receivingUser->friends()->attach($sendingUser);
             return response()->json([
-                "message" => "Successfully added user as friend",
+                "message" => "Successfully added user as friend.",
                 "sender" => new UserResource($sendingUser),
                 "receiver" => new UserResource($receivingUser)
             ]);
@@ -52,12 +59,15 @@ class FriendUserController extends Controller
     {
         //Ability to see all friends w their streaks
         $token = $request->token; //This token comes from the ValidateUserLoginToken middleware
-        $user = User::where('id', $token->tokenable_id)->first();
+        $user = User::where('id', $token->tokenable_id)->with("streak", "profileImage")->first();
 
-        $friends = $user->friends()->with("streak")->get();
+        $friends = $user->friends()->with("streak", "profileImage")->get();
 
+        //https://laravel.com/docs/12.x/collections#method-concat
+        $concatenated = collect([$user])->concat($friends);
         return response()->json([
-            "friends" => UserResource::collection($friends)
+            //Also show yourself in the friends list so frontend compare your own data to other people's data.
+            "friends" => UserResource::collection($concatenated->all())
         ]);
     }
 }
