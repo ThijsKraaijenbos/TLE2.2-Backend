@@ -4,6 +4,7 @@ use App\Http\Controllers\AssignmentController;
 use App\Http\Controllers\FriendUserController;
 use App\Http\Controllers\FruitController;
 use App\Http\Controllers\FunFactController;
+use App\Http\Controllers\ProfileImageController;
 use App\Http\Controllers\StreakController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ValidateUserLoginToken;
@@ -24,10 +25,29 @@ Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
     Route::post('/login', [UserController::class, 'login']);
     Route::get('/user', [UserController::class, 'user'])->middleware(ValidateUserLoginToken::class);
 
-    //list all friends
+    Route::get('/profile-images', [ProfileImageController::class, 'index']);
+
+    //middleware for x-user-login-token
     Route::middleware([ValidateUserLoginToken::class])->group(function () {
+        //list all friends & add friends
         Route::get('/friends', [FriendUserController::class, 'showFriends']);
         Route::post('/friends', [FriendUserController::class, 'addFriend']);
+
+        /*
+        if anyone is merging this just keep it like this.
+        The other Route::apiResources outside of this middleware will be moved
+        in here later, but Roshan wanted to keep them out of the API KEY middleware
+        (auth:sanctum and ability:api_key) for testing reasons, so I'll leave them there -thijs
+        */
+
+        //Update streak
+        Route::put('/updateStreak', [StreakController::class, 'updateByUser']);
+
+        //Update user
+        Route::put('/users/{user}', [UserController::class, 'update']);
+
+        //Toggle fruit preference
+        Route::put('/fruits/{fruit}/togglePreference', [FruitController::class, 'togglePreference']);
     });
 
 });
@@ -38,19 +58,6 @@ Route::apiResource('assignments', AssignmentController::class);
 Route::apiResource('fruits', FruitController::class);
 Route::apiResource('streaks', StreakController::class);
 Route::apiResource('fun-facts', FunFactController::class);
-
-Route::middleware([ValidateUserLoginToken::class])->group(function () {
-
-    //Update streak
-    Route::put('/updateStreak', [StreakController::class, 'updateByUser']);
-
-    //Update user
-    Route::put('/users/{user}', [UserController::class, 'update']);
-
-    //Toggle fruit preference
-    Route::put('/fruits/{fruit}/togglePreference', [FruitController::class, 'togglePreference']);
-
-});
 
 
 
