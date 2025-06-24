@@ -59,12 +59,15 @@ class FriendUserController extends Controller
     {
         //Ability to see all friends w their streaks
         $token = $request->token; //This token comes from the ValidateUserLoginToken middleware
-        $user = User::where('id', $token->tokenable_id)->first();
+        $user = User::where('id', $token->tokenable_id)->with("streak")->first();
 
         $friends = $user->friends()->with("streak")->get();
 
+        //https://laravel.com/docs/12.x/collections#method-concat
+        $concatenated = collect([$user])->concat($friends);
         return response()->json([
-            "friends" => UserResource::collection($friends)
+            //Also show yourself in the friends list so frontend compare your own data to other people's data.
+            "friends" => UserResource::collection($concatenated->all())
         ]);
     }
 }
