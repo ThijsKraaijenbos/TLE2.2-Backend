@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProfileImageRequest;
 use App\Http\Requests\UpdateProfileImageRequest;
+use App\Http\Resources\ProfileImageResource;
 use App\Models\ProfileImage;
 
 class ProfileImageController extends Controller
@@ -13,7 +14,10 @@ class ProfileImageController extends Controller
      */
     public function index()
     {
-        //
+        $allImages = ProfileImage::all();
+        return response()->json([
+           "images" => ProfileImageResource::collection($allImages)
+        ]);
     }
 
     /**
