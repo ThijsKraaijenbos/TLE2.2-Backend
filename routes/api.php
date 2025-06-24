@@ -20,48 +20,49 @@ use App\Http\Middleware\CorsMiddleware;
 //All routes need to stay in the sanctum middleware since they all need a bearer token for an API user
 //Check register.blade.php, web.php, and DevUserController.php for more info.
 //Error: Invalid ability provided. means that an API key with the wrong ability was inserted (probably a regular user login token)
-Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
-    //Regular user registration, login (token return), and getting user info
-    Route::post('/register', [UserController::class, 'register']);
-    Route::post('/login', [UserController::class, 'login']);
-    Route::get('/user', [UserController::class, 'user'])->middleware(ValidateUserLoginToken::class);
 
-    Route::get('/profile-images', [ProfileImageController::class, 'index']);
+Route::middleware(['Cors'])->group(function () {
+    Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
+        //Regular user registration, login (token return), and getting user info
+        Route::post('/register', [UserController::class, 'register']);
+        Route::post('/login', [UserController::class, 'login']);
+        Route::get('/user', [UserController::class, 'user'])->middleware(ValidateUserLoginToken::class);
 
-    //middleware for x-user-login-token
-    Route::middleware([ValidateUserLoginToken::class])->group(function () {
-        //list all friends & add friends
-        Route::get('/friends', [FriendUserController::class, 'showFriends']);
-        Route::post('/friends', [FriendUserController::class, 'addFriend']);
+        Route::get('/profile-images', [ProfileImageController::class, 'index']);
 
-        /*
-        if anyone is merging this just keep it like this.
-        The other Route::apiResources outside of this middleware will be moved
-        in here later, but Roshan wanted to keep them out of the API KEY middleware
-        (auth:sanctum and ability:api_key) for testing reasons, so I'll leave them there -thijs
-        */
+        //middleware for x-user-login-token
+        Route::middleware([ValidateUserLoginToken::class])->group(function () {
+            //list all friends & add friends
+            Route::get('/friends', [FriendUserController::class, 'showFriends']);
+            Route::post('/friends', [FriendUserController::class, 'addFriend']);
 
-        //Update streak
-        Route::put('/updateStreak', [StreakController::class, 'updateByUser']);
+            /*
+            if anyone is merging this just keep it like this.
+            The other Route::apiResources outside of this middleware will be moved
+            in here later, but Roshan wanted to keep them out of the API KEY middleware
+            (auth:sanctum and ability:api_key) for testing reasons, so I'll leave them there -thijs
+            */
 
-        //Update user
-        Route::put('/users/{user}', [UserController::class, 'update']);
+            //Update streak
+            Route::put('/updateStreak', [StreakController::class, 'updateByUser']);
 
-        //Toggle fruit preference
-        Route::put('/fruits/{fruit}/togglePreference', [FruitController::class, 'togglePreference']);
-    });
+            //Update user
+            Route::put('/users/{user}', [UserController::class, 'update']);
 
-});
+            //Toggle fruit preference
+            Route::put('/fruits/{fruit}/togglePreference', [FruitController::class, 'togglePreference']);
+        });
 
 
 // Main routes for the app.
-Route::middleware(['Cors'])->group(function () {
-    Route::apiResource('assignments', AssignmentController::class);
-    Route::apiResource('fruits', FruitController::class);
-    Route::apiResource('streaks', StreakController::class);
-    Route::apiResource('fun-facts', FunFactController::class);
-});
+        Route::apiResource('assignments', AssignmentController::class);
+        Route::apiResource('fruits', FruitController::class);
+        Route::apiResource('streaks', StreakController::class);
+        Route::apiResource('fun-facts', FunFactController::class);
+    });
 
+
+});
 
 
 
