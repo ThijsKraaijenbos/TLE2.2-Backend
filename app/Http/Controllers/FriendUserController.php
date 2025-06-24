@@ -59,9 +59,9 @@ class FriendUserController extends Controller
     {
         //Ability to see all friends w their streaks
         $token = $request->token; //This token comes from the ValidateUserLoginToken middleware
-        $user = User::where('id', $token->tokenable_id)->with("streak")->first();
+        $user = User::where('id', $token->tokenable_id)->with("streak", "profileImage")->first();
 
-        $friends = $user->friends()->with("streak")->get();
+        $friends = $user->friends()->with("streak", "profileImage")->get();
 
         //https://laravel.com/docs/12.x/collections#method-concat
         $concatenated = collect([$user])->concat($friends);
