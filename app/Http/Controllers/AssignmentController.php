@@ -6,6 +6,7 @@ use App\Http\Resources\AssignmentResource;
 use App\Http\Resources\UserResource;
 use App\Models\Assignment;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AssignmentController extends Controller
@@ -13,14 +14,13 @@ class AssignmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request): JsonResponse
     {
-        $response = response()->json(
+        return response()->json(
             [
                 'message' => "Successfully retrieved all assignments",
                 'data' => AssignmentResource::collection(Assignment::all())
             ], 200);
-        return $response;
     }
 
     /**

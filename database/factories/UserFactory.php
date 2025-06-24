@@ -30,7 +30,6 @@ class UserFactory extends Factory
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
-
             'profile_image_id' => ProfileImage::query()->inRandomOrder()->value(column: 'id') ?? ProfileImage::factory(),
             'role' => fake()->randomElement(UserRole::class)
         ];

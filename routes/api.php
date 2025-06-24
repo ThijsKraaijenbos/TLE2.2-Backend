@@ -8,6 +8,7 @@ use App\Http\Controllers\StreakController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ValidateUserLoginToken;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CorsMiddleware;
 
 //random comment to test deployment
 
@@ -34,10 +35,13 @@ Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
 
 
 // Main routes for the app.
-Route::apiResource('assignments', AssignmentController::class);
-Route::apiResource('fruits', FruitController::class);
-Route::apiResource('streaks', StreakController::class);
-Route::apiResource('fun-facts', FunFactController::class);
+Route::middleware(['Cors'])->group(function () {
+    Route::apiResource('assignments', AssignmentController::class);
+    Route::apiResource('fruits', FruitController::class);
+    Route::apiResource('streaks', StreakController::class);
+    Route::apiResource('fun-facts', FunFactController::class);
+});
+
 
 Route::middleware([ValidateUserLoginToken::class])->group(function () {
 

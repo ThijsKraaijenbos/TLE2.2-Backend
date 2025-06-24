@@ -16,16 +16,24 @@ class StreakController extends Controller
     public function index()
     {
 
-        // Get all users and their streaks and use this as a parameter in the Resource.
-        // Otherwise it will not returned anything at all.
-        $streaksUser = Streak::with('user')->get();
-        // Return all users and their streaks and send it with a JSON format:
-        $response = response()->json(
-            [
-                'message' => "Successfully retrieved all streaks and their users",
-                'data' => StreakResource::collection($streaksUser)
-            ], 200);
-        return $response;
+        try {
+            // Get all users and their streaks and use this as a parameter in the Resource.
+            // Otherwise it will not returned anything at all.
+            $streaksUser = Streak::with(['user' => function ($query) {
+                $query->select('id', 'name', 'profile_image_id');
+            }])->get();
+            dd($streaksUser);
+            // Return all users and their streaks and send it with a JSON format:
+            $response = response()->json(
+                [
+                    'message' => "Successfully retrieved all streaks and their users",
+                    'data' => StreakResource::collection($streaksUser)
+                ], 200);
+            return $response;
+        } catch (\Exception $error) {
+            return response()->json(['error' => 'Please try again later'], 500);
+        }
+
     }
 
     /**
@@ -36,7 +44,7 @@ class StreakController extends Controller
         // Store the request from the front-end check the inputs that
         // are required and send a JSON response with a 201 code
 
-        $userToken = $request->header('X-user-login-token');
+        $userToken = $request->header('X - user - login - token');
         if (!$userToken) {
             return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
         }
@@ -53,7 +61,7 @@ class StreakController extends Controller
 
 
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'required | exists:users,id',
             'start_date' => 'date',
             'last_completed_date' => 'date',
             'current_streak' => 'integer',
@@ -115,11 +123,10 @@ class StreakController extends Controller
      */
     public function update(Request $request, string $id)
     {
-
         // Store the request from the front-end check the inputs that
         // are required and send a JSON response with a 201 code
 
-        $userToken = $request->header('X-user-login-token');
+        $userToken = $request->header('X - user - login - token');
         if (!$userToken) {
             return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
         }
@@ -134,9 +141,7 @@ class StreakController extends Controller
 
         $user = User::where('id', $token->tokenable_id)->first();
 
-        // request all the inputs keys
-        // validate all the input keys
-        // add extra logic in case of authorization
+        // request & validate all the input keys , add extra logic in case of authorization
 
         $streak = Streak::find($id);
         if (!$streak) {
@@ -151,13 +156,12 @@ class StreakController extends Controller
 
 
         $validated = $request->validate([
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'required | exists:users,id',
             'start_date' => 'date',
             'last_completed_date' => 'date',
             'current_streak' => 'integer',
             'longest_streak' => 'integer'
         ]);
-
         $streak = new Streak($validated);
         $streak->user_id = $user->id;
         $streak->save();
@@ -190,8 +194,8 @@ class StreakController extends Controller
                 $streak = Streak::where('user_id', $request->token->tokenable_id)->first();
 
                 $streak->current_streak = 0;
-                $streak->start_date = date('d-m-Y');
-                $streak->last_completed_date = date('d-m-Y');
+                $streak->start_date = date('d - m - Y');
+                $streak->last_completed_date = date('d - m - Y');
 
                 $streak->save();
 
@@ -207,15 +211,15 @@ class StreakController extends Controller
 
         //Manually validate date format
         if (!$request->date) {
-            return response()->json(['error' => 'Date must be provided, please use the format dd-mm-yyyy'], 400);
+            return response()->json(['error' => 'Date must be provided, please use the format dd - mm - yyyy'], 400);
         }
 
-        $splitDate = explode('-', $request->date);
+        $splitDate = explode(' - ', $request->date);
 
         $dateFields = count($splitDate);
 
         if ($dateFields !== 3) {
-            return response()->json(['error' => 'Incorrect date format, please use dd-mm-yyyy'], 400);
+            return response()->json(['error' => 'Incorrect date format, please use dd-mm - yyyy'], 400);
         }
 
         if (!is_numeric($splitDate[0])) {

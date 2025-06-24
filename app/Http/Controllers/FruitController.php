@@ -183,11 +183,9 @@ class FruitController extends Controller
     public function update(Request $request, Fruit $fruit)
     {
         try {
-            // validations, request input fields, sync or attach to pivottable if needed, send json resposne with 201 code
             // validate all fields
             // when the user changes if he likes the fruit or not
             $validated = $request->validate([
-                'fruit_id' => 'required|integer',
                 'has_eaten_before' => 'boolean',
                 'like' => 'boolean'
             ]);
@@ -205,6 +203,12 @@ class FruitController extends Controller
             $user = User::where('id', $token->tokenable_id)->first();
 
 
+            if (!$fruit) {
+                return response()->json(
+                    data: ['message' => 'Fruit not found'],
+                    status: 404
+                );
+            }
             // Before updating the id must be the same as the fruit_id you are trying to change
             if ($fruit->id !== $request->input(['fruit_id'])) {
                 return response()->json(
@@ -217,21 +221,26 @@ class FruitController extends Controller
 
             // updateExistingPivot takes, as its first argument, the id of the row on the related table, not the id of the row on the pivot table.
             $user->fruits()->updateExistingPivot(
-                $validated['fruit_id'], // Always start with the id
+                $fruit->id, // Always start with the id
                 [
                     'has_eaten_before' => $validated['has_eaten_before'],
                     'like' => $validated['like']
                 ]);
             return response()->json(
-                [
+                data: [
                     'message' => 'Fruit resource successfully updated',
                     'changed_by_user' => $user,
                     'pivot_table_updated_data ' => [
                         'has_eaten_before' => $validated['has_eaten_before'],
                         'like' => $validated['like']
                     ]
+                ],
+                status: 200,
+                headers: [
+                    'Content-Type' => 'application/json',
+                    'Access-Control-Allow-Methods' => 'PUT'
                 ]
-                , 200);
+            );
         } catch (\Exception $e) {
             return response()->json([
                 'error' => $e->getMessage()
@@ -256,12 +265,12 @@ class FruitController extends Controller
 
             if (!$preference) {
 
-             $preference = FruitUser::create([
-                 'fruit_id' => $fruit->id,
-                 'user_id' => $request->token->tokenable_id,
-                 'has_eaten_before' => 0,
-                 'like' => 1
-             ]);
+                $preference = FruitUser::create([
+                    'fruit_id' => $fruit->id,
+                    'user_id' => $request->token->tokenable_id,
+                    'has_eaten_before' => 0,
+                    'like' => 1
+                ]);
 
             }
 
