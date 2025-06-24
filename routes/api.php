@@ -21,8 +21,7 @@ use App\Http\Middleware\CorsMiddleware;
 //Check register.blade.php, web.php, and DevUserController.php for more info.
 //Error: Invalid ability provided. means that an API key with the wrong ability was inserted (probably a regular user login token)
 
-Route::middleware(['Cors'])->group(function () {
-    Route::middleware(['auth:sanctum', 'ability:API_KEY'])->group(function () {
+    Route::middleware(['auth:sanctum', 'ability:API_KEY','Cors'])->group(function () {
         //Regular user registration, login (token return), and getting user info
         Route::post('/register', [UserController::class, 'register']);
         Route::post('/login', [UserController::class, 'login']);
@@ -53,16 +52,13 @@ Route::middleware(['Cors'])->group(function () {
             Route::put('/fruits/{fruit}/togglePreference', [FruitController::class, 'togglePreference']);
         });
 
-
-// Main routes for the app.
+    // Main routes for the app.
         Route::apiResource('assignments', AssignmentController::class);
         Route::apiResource('fruits', FruitController::class);
         Route::apiResource('streaks', StreakController::class);
         Route::apiResource('fun-facts', FunFactController::class);
     });
 
-
-});
 
 
 
