@@ -250,4 +250,47 @@ class FruitController extends Controller
     {
         //
     }
+
+    public function togglePreference(Request $request, Fruit $fruit)
+    {
+
+        try {
+
+            $preference = FruitUser::where('user_id', $request->token->tokenable_id)->where('fruit_id', $fruit->id)->first();
+
+            if (!$preference) {
+
+             $preference = FruitUser::create([
+                 'fruit_id' => $fruit->id,
+                 'user_id' => $request->token->tokenable_id,
+                 'has_eaten_before' => 0,
+                 'like' => 1
+             ]);
+
+            }
+
+            if (isset($request->has_eaten_before)) {
+
+                $preference->has_eaten_before = $request->has_eaten_before ? 1 : 0;
+
+            }
+
+            if (isset($request->like)) {
+
+                $preference->like = $request->like ? 1 : 0;
+
+            }
+
+            $preference->save();
+
+            return response()->json(['message' => 'Preference was successfully updated', $preference], 200);
+
+        } catch (\Exception $error) {
+
+            return response()->json(['error' => 'Please try again later'], 500);
+
+        }
+
+    }
+
 }

@@ -47,6 +47,9 @@ Route::middleware([ValidateUserLoginToken::class])->group(function () {
     //Update user
     Route::put('/users/{user}', [UserController::class, 'update']);
 
+    //Toggle fruit preference
+    Route::put('/fruits/{fruit}/togglePreference', [FruitController::class, 'togglePreference']);
+
 });
 
 
