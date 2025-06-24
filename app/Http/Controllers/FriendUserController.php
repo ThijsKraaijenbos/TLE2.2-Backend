@@ -27,7 +27,14 @@ class FriendUserController extends Controller
         $alreadyFriends = $sendingUser->friends()->get()->contains($receivingUser->id);
         if ($alreadyFriends) {
             return response()->json([
-                "message" => "These users are already friends",
+                "message" => "These users are already friends.",
+            ]);
+        }
+
+        //check if you're adding yourself since that was a bug mentioned by Justin
+        if ($sendingUser == $receivingUser) {
+            return response()->json([
+                "message" => "You cannot send a friend request to yourself."
             ]);
         }
 
@@ -37,7 +44,7 @@ class FriendUserController extends Controller
             $sendingUser->friends()->attach($receivingUser);
             $receivingUser->friends()->attach($sendingUser);
             return response()->json([
-                "message" => "Successfully added user as friend",
+                "message" => "Successfully added user as friend.",
                 "sender" => new UserResource($sendingUser),
                 "receiver" => new UserResource($receivingUser)
             ]);
