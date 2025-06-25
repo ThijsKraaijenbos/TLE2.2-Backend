@@ -194,7 +194,7 @@ class StreakController extends Controller
 
                 $streak->current_streak = 0;
                 $streak->start_date = date('d-m-Y');
-                $streak->last_completed_date = date('d-m-Y');
+                $streak->last_completed_date = date('d-m-Y', strtotime('yesterday'));
 
                 $streak->save();
 
@@ -257,7 +257,16 @@ class StreakController extends Controller
 
             $streak = Streak::where('user_id', $request->token->tokenable_id)->first();
 
-            if ($streak->last_completed_date === $request->date && $streak->current_streak > 0) {
+            //Convert both dates to a unix timestamp to make comparing the two more consistent
+            $sentDate = strtotime($request->date);
+            $databaseDate = strtotime($streak->last_completed_date);
+
+            //If the sent date is before the one in the database, return an error
+            if ($sentDate < $databaseDate) {
+                return response()->json(['message' => "Date is earlier than the latest completed date", 'last_completed_date' => $streak->last_completed_date], 400);
+            }
+
+            if ($sentDate === $databaseDate && $streak->current_streak > 0) {
                 return response()->json(['message' => "Streak already up to date", 'streak' => $streak], 200);
             }
 
