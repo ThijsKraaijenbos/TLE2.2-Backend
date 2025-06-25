@@ -37,9 +37,9 @@ class FruitController extends Controller
 
                 if ($userPreferences->isNotEmpty()) {
 
-                    foreach ($userPreferences as $key => $preference) {
+                    foreach ($userPreferences as $preference) {
 
-                        foreach ($fruitPivotsData as $datum) {
+                        foreach ($fruitPivotsData as $key => $datum) {
 
                             if ($datum['id'] === $preference->fruit_id) {
 
