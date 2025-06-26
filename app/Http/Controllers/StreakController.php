@@ -22,7 +22,6 @@ class StreakController extends Controller
             $streaksUser = Streak::with(['user' => function ($query) {
                 $query->select('id', 'name', 'profile_image_id');
             }])->get();
-            dd($streaksUser);
             // Return all users and their streaks and send it with a JSON format:
             $response = response()->json(
                 [
