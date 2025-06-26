@@ -43,7 +43,7 @@ class StreakController extends Controller
         // Store the request from the front-end check the inputs that
         // are required and send a JSON response with a 201 code
 
-        $userToken = $request->header('X - user - login - token');
+        $userToken = $request->header('X-user-login-token');
         if (!$userToken) {
             return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
         }
@@ -60,7 +60,7 @@ class StreakController extends Controller
 
 
         $validated = $request->validate([
-            'user_id' => 'required | exists:users,id',
+            'user_id' => 'required|exists:users,id',
             'start_date' => 'date',
             'last_completed_date' => 'date',
             'current_streak' => 'integer',
@@ -125,7 +125,7 @@ class StreakController extends Controller
         // Store the request from the front-end check the inputs that
         // are required and send a JSON response with a 201 code
 
-        $userToken = $request->header('X - user - login - token');
+        $userToken = $request->header('X-user-login-token');
         if (!$userToken) {
             return response()->json(["error" => "Please provide an X-user-login-token header"], 404);
         }
@@ -155,7 +155,7 @@ class StreakController extends Controller
 
 
         $validated = $request->validate([
-            'user_id' => 'required | exists:users,id',
+            'user_id' => 'required|exists:users,id',
             'start_date' => 'date',
             'last_completed_date' => 'date',
             'current_streak' => 'integer',
@@ -193,8 +193,8 @@ class StreakController extends Controller
                 $streak = Streak::where('user_id', $request->token->tokenable_id)->first();
 
                 $streak->current_streak = 0;
-                $streak->start_date = date('d - m - Y');
-                $streak->last_completed_date = date('d - m - Y');
+                $streak->start_date = date('d-m-Y');
+                $streak->last_completed_date = date('d-m-Y', strtotime('yesterday'));
 
                 $streak->save();
 
@@ -210,15 +210,15 @@ class StreakController extends Controller
 
         //Manually validate date format
         if (!$request->date) {
-            return response()->json(['error' => 'Date must be provided, please use the format dd - mm - yyyy'], 400);
+            return response()->json(['error' => 'Date must be provided, please use the format dd-mm-yyyy'], 400);
         }
 
-        $splitDate = explode(' - ', $request->date);
+        $splitDate = explode('-', $request->date);
 
         $dateFields = count($splitDate);
 
         if ($dateFields !== 3) {
-            return response()->json(['error' => 'Incorrect date format, please use dd-mm - yyyy'], 400);
+            return response()->json(['error' => 'Incorrect date format, please use dd-mm-yyyy'], 400);
         }
 
         if (!is_numeric($splitDate[0])) {
@@ -257,7 +257,16 @@ class StreakController extends Controller
 
             $streak = Streak::where('user_id', $request->token->tokenable_id)->first();
 
-            if ($streak->last_completed_date === $request->date && $streak->current_streak > 0) {
+            //Convert both dates to a unix timestamp to make comparing the two more consistent
+            $sentDate = strtotime($request->date);
+            $databaseDate = strtotime($streak->last_completed_date);
+
+            //If the sent date is before the one in the database, return an error
+            if ($sentDate < $databaseDate) {
+                return response()->json(['message' => "Date is earlier than the latest completed date", 'last_completed_date' => $streak->last_completed_date], 400);
+            }
+
+            if ($sentDate === $databaseDate && $streak->current_streak > 0) {
                 return response()->json(['message' => "Streak already up to date", 'streak' => $streak], 200);
             }
 
